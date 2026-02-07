@@ -1,0 +1,14 @@
+{
+  "name": "lissajou",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Real-time Lissajous curve visualizer",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "serve": "npx serve ."
+  },
+  "devDependencies": {
+    "vitest": "^3.0.0"
+  }
+}
