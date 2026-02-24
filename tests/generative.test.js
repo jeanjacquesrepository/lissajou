@@ -130,8 +130,8 @@ describe('randomHash', () => {
 // --- Collections ---
 
 describe('COLLECTION_NAMES', () => {
-  it('has 6 collections', () => {
-    expect(COLLECTION_NAMES).toHaveLength(6);
+  it('has 8 collections', () => {
+    expect(COLLECTION_NAMES).toHaveLength(8);
   });
 
   it('contains all expected names', () => {
@@ -141,6 +141,8 @@ describe('COLLECTION_NAMES', () => {
     expect(COLLECTION_NAMES).toContain('Glitch Matrix');
     expect(COLLECTION_NAMES).toContain('Minimal Wave');
     expect(COLLECTION_NAMES).toContain('Cosmic Spiral');
+    expect(COLLECTION_NAMES).toContain('Face Portrait');
+    expect(COLLECTION_NAMES).toContain('Geometric Spin');
   });
 });
 
@@ -244,5 +246,56 @@ describe('generateFromHash', () => {
       const result = generateFromHash(hash, 'Cosmic Spiral');
       expect(result.animate).toBe(true);
     }
+  });
+
+  it('Face Portrait sets mode to face', () => {
+    for (let i = 0; i < 10; i++) {
+      const hash = '0x' + i.toString(16).padStart(64, 'f');
+      const result = generateFromHash(hash, 'Face Portrait');
+      expect(result.mode).toBe('face');
+    }
+  });
+
+  it('Face Portrait includes face-specific params', () => {
+    const hash = '0x' + '42'.repeat(32);
+    const result = generateFromHash(hash, 'Face Portrait');
+    expect(result).toHaveProperty('faceHeadWidth');
+    expect(result).toHaveProperty('faceEyeSize');
+    expect(result).toHaveProperty('faceMouthCurve');
+    expect(result).toHaveProperty('faceDetail');
+  });
+
+  it('Lissajous collections set mode to lissajous', () => {
+    const hash = '0x' + '42'.repeat(32);
+    for (const name of ['Harmonograph', 'Phosphor Dream', 'Rational Rose', 'Glitch Matrix', 'Minimal Wave', 'Cosmic Spiral']) {
+      const result = generateFromHash(hash, name);
+      expect(result.mode).toBe('lissajous');
+    }
+  });
+
+  it('Geometric Spin sets mode to wireframe', () => {
+    for (let i = 0; i < 10; i++) {
+      const hash = '0x' + i.toString(16).padStart(64, 'a');
+      const result = generateFromHash(hash, 'Geometric Spin');
+      expect(result.mode).toBe('wireframe');
+    }
+  });
+
+  it('Geometric Spin always animates', () => {
+    for (let i = 0; i < 10; i++) {
+      const hash = '0x' + i.toString(16).padStart(64, 'b');
+      const result = generateFromHash(hash, 'Geometric Spin');
+      expect(result.animate).toBe(true);
+      expect(result.wireAutoRotate).toBe(true);
+    }
+  });
+
+  it('Geometric Spin includes wireframe params', () => {
+    const hash = '0x' + '42'.repeat(32);
+    const result = generateFromHash(hash, 'Geometric Spin');
+    expect(result).toHaveProperty('wireShape');
+    expect(result).toHaveProperty('wireScale');
+    expect(result).toHaveProperty('wireSpeedX');
+    expect(result).toHaveProperty('wirePerspective');
   });
 });

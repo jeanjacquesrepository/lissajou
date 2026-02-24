@@ -1,4 +1,6 @@
 import { generateCurve, lissajousPoint } from './lissajous.js';
+import { generateFace } from './face.js';
+import { generateWireframe } from './wireframe.js';
 import { hexToRgb } from './utils.js';
 import { CANVAS_SIZE } from './config.js';
 
@@ -66,6 +68,30 @@ export function createSketch(params) {
       }
     };
 
+    function getGeometry(params) {
+      if (params.mode === 'face') {
+        // Animate pupils from delta if enabled
+        if (params.faceAnimatePupils && params.animate) {
+          params.facePupilOffX = Math.cos(params.delta) * 0.5;
+          params.facePupilOffY = Math.sin(params.delta) * 0.3;
+        }
+        return generateFace(params);
+      }
+      if (params.mode === 'wireframe') {
+        // Auto-rotate 3D solid
+        if (params.wireAutoRotate && params.animate) {
+          params.wireRotX += params.wireSpeedX;
+          params.wireRotY += params.wireSpeedY;
+          params.wireRotZ += params.wireSpeedZ;
+          if (params.wireRotX > Math.PI * 2) params.wireRotX -= Math.PI * 2;
+          if (params.wireRotY > Math.PI * 2) params.wireRotY -= Math.PI * 2;
+          if (params.wireRotZ > Math.PI * 2) params.wireRotZ -= Math.PI * 2;
+        }
+        return generateWireframe(params);
+      }
+      return [{ points: generateCurve(params), closed: false }];
+    }
+
     function drawNormalMode(p, params) {
       const bg = hexToRgb(params.bgColor);
       if (bg) {
@@ -81,14 +107,43 @@ export function createSketch(params) {
       p.strokeWeight(params.strokeWeight);
       p.noFill();
 
-      const points = generateCurve(params);
-      p.beginShape();
-      for (const pt of points) {
-        p.vertex(pt.x, pt.y);
-      }
-      p.endShape();
+      const strokes = getGeometry(params);
+      const useDepthShading = params.mode === 'wireframe' && params.wireDepthShading && sc;
 
-      if (params.showDot) {
+      // Pre-compute depth range for shading
+      let depthMin = Infinity, depthMax = -Infinity;
+      if (useDepthShading) {
+        for (const stroke of strokes) {
+          if (stroke.depth !== undefined) {
+            if (stroke.depth < depthMin) depthMin = stroke.depth;
+            if (stroke.depth > depthMax) depthMax = stroke.depth;
+          }
+        }
+      }
+
+      for (const stroke of strokes) {
+        if (useDepthShading && stroke.depth !== undefined && depthMax > depthMin) {
+          const t = (stroke.depth - depthMin) / (depthMax - depthMin);
+          const brightness = 1 - t * (1 - params.wireDepthMin);
+          p.stroke(sc.r * brightness, sc.g * brightness, sc.b * brightness);
+        }
+        p.beginShape();
+        for (const pt of stroke.points) {
+          p.vertex(pt.x, pt.y);
+        }
+        if (stroke.closed) {
+          p.endShape(p.CLOSE);
+        } else {
+          p.endShape();
+        }
+      }
+
+      // Reset stroke color after depth shading
+      if (useDepthShading && sc) {
+        p.stroke(sc.r, sc.g, sc.b);
+      }
+
+      if (params.showDot && params.mode === 'lissajous') {
         const dotPos = lissajousPoint(animationT, params);
         p.noStroke();
         if (sc) {
@@ -103,15 +158,17 @@ export function createSketch(params) {
 
       xy.clearWaves();
 
-      const points = generateCurve(params);
+      const strokes = getGeometry(params);
       const cx = CANVAS_SIZE.width / 2;
       const cy = CANVAS_SIZE.height / 2;
 
-      xy.beginShape();
-      for (const pt of points) {
-        xy.vertex(pt.x + cx, pt.y + cy);
+      for (const stroke of strokes) {
+        xy.beginShape();
+        for (const pt of stroke.points) {
+          xy.vertex(pt.x + cx, pt.y + cy);
+        }
+        xy.endShape();
       }
-      xy.endShape();
 
       xy.buildWaves();
 

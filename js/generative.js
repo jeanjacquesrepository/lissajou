@@ -64,6 +64,7 @@ const COLLECTIONS = {
     const ratios = [[1,2],[2,3],[3,4],[3,2],[4,3],[5,4],[1,3],[2,5]];
     const [fx, fy] = rng.pick(ratios);
     return {
+      mode: 'lissajous',
       freqX: fx,
       freqY: fy,
       delta: rng.range(0, Math.PI * 2),
@@ -84,6 +85,7 @@ const COLLECTIONS = {
     const fx = rng.int(1, 5);
     const fy = rng.int(1, 5);
     return {
+      mode: 'lissajous',
       freqX: fx,
       freqY: fy,
       delta: rng.range(0, Math.PI * 2),
@@ -105,6 +107,7 @@ const COLLECTIONS = {
     const fx = rng.int(5, 17);
     const fy = rng.int(5, 17);
     return {
+      mode: 'lissajous',
       freqX: fx,
       freqY: fy,
       delta: rng.range(0, Math.PI * 2),
@@ -125,6 +128,7 @@ const COLLECTIONS = {
     const base = rng.int(2, 8);
     const offset = rng.pick([0.01, 0.02, 0.05, 0.1, -0.01, -0.02, -0.05]);
     return {
+      mode: 'lissajous',
       freqX: base + offset,
       freqY: base + rng.pick([1, -1, 2, -2]) + rng.pick([0, 0.01, -0.01]),
       delta: rng.range(0, Math.PI * 2),
@@ -145,6 +149,7 @@ const COLLECTIONS = {
   'Minimal Wave': (rng) => {
     const [fx, fy] = rng.pick([[1,1],[1,2],[2,1]]);
     return {
+      mode: 'lissajous',
       freqX: fx,
       freqY: fy,
       delta: rng.range(0, Math.PI * 2),
@@ -165,6 +170,7 @@ const COLLECTIONS = {
     const fx = rng.int(1, 7);
     const fy = rng.int(1, 7);
     return {
+      mode: 'lissajous',
       freqX: fx,
       freqY: fy,
       delta: rng.range(0, Math.PI * 2),
@@ -179,6 +185,81 @@ const COLLECTIONS = {
       dotSize: rng.int(4, 12),
       scopeHue: rng.pick([240, 260, 280, 200, 180]),
       scopePersistence: rng.range(-1.2, -0.2),
+    };
+  },
+
+  'Face Portrait': (rng) => {
+    const headW = rng.int(150, 300);
+    const headH = rng.int(180, 340);
+    const eyeSize = rng.int(18, 60);
+    return {
+      mode: 'face',
+      faceHeadWidth: headW,
+      faceHeadHeight: headH,
+      faceHeadRoundness: rng.range(2.0, 4.5),
+      faceEyeSpacing: rng.int(35, Math.min(120, headW / 2 - eyeSize)),
+      faceEyeY: rng.int(-80, -10),
+      faceEyeSize: eyeSize,
+      faceEyeAspect: rng.range(0.4, 1.2),
+      faceEyeRoundness: rng.range(1.5, 4),
+      facePupilSize: rng.int(4, Math.max(5, Math.floor(eyeSize * 0.6))),
+      facePupilOffX: 0,
+      facePupilOffY: 0,
+      faceBrowArch: rng.int(-10, 30),
+      faceBrowLength: rng.int(15, 70),
+      faceBrowGap: rng.int(5, 30),
+      faceBrowAngle: rng.range(-0.2, 0.2),
+      faceNoseLength: rng.int(15, 70),
+      faceNoseWidth: rng.int(8, 45),
+      faceMouthWidth: rng.int(25, 110),
+      faceMouthCurve: rng.int(-30, 40),
+      faceMouthY: rng.int(40, 140),
+      faceMouthOpen: rng.chance(0.3) ? rng.int(5, 25) : 0,
+      faceEarSize: rng.chance(0.7) ? rng.int(10, 45) : 0,
+      faceEarHeight: rng.int(15, 65),
+      faceEarY: rng.int(-50, 20),
+      faceEarPointy: rng.range(0, 0.8),
+      faceDetail: rng.pick([48, 64, 96, 128]),
+      faceScale: rng.range(0.8, 1.4),
+      faceRotation: rng.range(-0.12, 0.12),
+      faceAnimatePupils: rng.chance(0.7),
+      strokeWeight: rng.range(1.5, 3.5),
+      bgAlpha: 255,
+      animate: rng.chance(0.6),
+      speed: rng.range(0.002, 0.01),
+      showDot: false,
+      scopeHue: rng.int(0, 360),
+    };
+  },
+
+  'Geometric Spin': (rng) => {
+    const shapes = ['cube', 'tetrahedron', 'octahedron', 'dodecahedron', 'icosahedron', 'sphere', 'torus', 'cylinder', 'cone', 'prism'];
+    const shape = rng.pick(shapes);
+    return {
+      mode: 'wireframe',
+      wireShape: shape,
+      wireScale: rng.int(100, 280),
+      wireRotX: rng.range(0, Math.PI * 2),
+      wireRotY: rng.range(0, Math.PI * 2),
+      wireRotZ: rng.range(0, Math.PI * 2),
+      wireSpeedX: rng.range(0.001, 0.02),
+      wireSpeedY: rng.range(0.001, 0.02),
+      wireSpeedZ: rng.chance(0.4) ? rng.range(0.001, 0.01) : 0,
+      wireAutoRotate: true,
+      wirePerspective: rng.int(400, 1500),
+      wireRings: rng.int(6, 24),
+      wireSegments: rng.int(8, 32),
+      wireTubeRatio: rng.range(0.1, 0.6),
+      wireTopRadius: rng.chance(0.5) ? 1.0 : rng.range(0, 0.8),
+      wirePrismSides: rng.int(3, 10),
+      wireDepthShading: rng.chance(0.7),
+      wireDepthMin: rng.range(0.2, 0.6),
+      strokeWeight: rng.range(1, 2.5),
+      bgAlpha: 255,
+      animate: true,
+      speed: rng.range(0.003, 0.01),
+      showDot: false,
+      scopeHue: rng.int(0, 360),
     };
   },
 };

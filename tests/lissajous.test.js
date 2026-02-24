@@ -97,6 +97,22 @@ describe('validateParams', () => {
   const validParams = {
     freqX: 3, freqY: 2, delta: Math.PI / 2, ampX: 200, ampY: 200,
     numPoints: 1000, strokeWeight: 2, bgAlpha: 255, speed: 0.005, dotSize: 8,
+    // Face params
+    faceHeadWidth: 200, faceHeadHeight: 250, faceHeadRoundness: 2.5,
+    faceEyeSpacing: 70, faceEyeY: -30, faceEyeSize: 35, faceEyeAspect: 0.7,
+    faceEyeRoundness: 2, facePupilSize: 10, facePupilOffX: 0, facePupilOffY: 0,
+    faceBrowArch: 12, faceBrowLength: 40, faceBrowGap: 15, faceBrowAngle: 0,
+    faceNoseLength: 40, faceNoseWidth: 20,
+    faceMouthWidth: 55, faceMouthCurve: 15, faceMouthY: 80, faceMouthOpen: 0,
+    faceEarSize: 20, faceEarHeight: 35, faceEarY: -10, faceEarPointy: 0.3,
+    faceDetail: 64, faceScale: 1.0, faceRotation: 0,
+    // Wireframe params
+    wireScale: 150, wireRotX: 0.4, wireRotY: 0.3, wireRotZ: 0,
+    wireSpeedX: 0.008, wireSpeedY: 0.006, wireSpeedZ: 0,
+    wirePerspective: 800, wireRings: 12, wireSegments: 16,
+    wireTubeRatio: 0.35, wireTopRadius: 1.0, wirePrismSides: 5,
+    wireDepthMin: 0.3,
+    // Oscilloscope params
     xyVolume: 0.5, xyFreq: 50, xyAmp: 1.0, xySmooth: 2,
     scopeHue: 120, scopePersistence: -1, scopeThickness: 0.01,
     scopeIntensity: 0.0, scopeGain: 0.1,
